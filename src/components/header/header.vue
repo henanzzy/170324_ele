@@ -38,13 +38,7 @@
           <div class="mask-main">
             <h1 class="title">{{seller.name}}</h1>
             <div class="star-wrapper">
-              <div class="stars stars-48">
-                <span class="star on"></span>
-                <span class="star on"></span>
-                <span class="star on"></span>
-                <span class="star half"></span>
-                <span class="star off"></span>
-              </div>
+              <star :score="seller.score" :size="48"></star>
             </div>
             <div class="info">
               <div class="line"></div>
@@ -79,6 +73,8 @@
 </template>
 
 <script>
+  import star from '../star/star.vue'
+
   export default {
     props: ['seller'],
     data () {
@@ -91,6 +87,9 @@
       showMask (isShow) {
         this.maskShow = isShow
       }
+    },
+    components: {
+      star
     }
   }
 </script>
@@ -232,56 +231,6 @@
             text-align center
           .star-wrapper
             margin 16px 0 28px 0
-            .stars
-              text-align center
-              height 24px
-              .star
-                display inline-block
-                background-repeat no-repeat
-              &.stars-48
-                .star
-                  margin-right 15px
-                  width 20px
-                  height 19px
-                  background-size 20px 19px
-                  &:last-child
-                    margin-right 0px
-                  &.on
-                    bg-image("../star/star48_on")
-                  &.half
-                    bg-image("../star/star48_half")
-                  &.off
-                    bg-image("../star/star48_off")
-              &.stars-36
-                .star
-                  margin-right 12px
-                  width 15px
-                  height 15px
-                  background-size 15px 15px
-                  &:last-child
-                    margin-right 0px
-                  &.on
-                    bg-image("../star/star36_on")
-                  &.half
-                    bg-image("../star/star36_half")
-                  &.off
-                    bg-image("../star/star36_off")
-              &.stars-24
-                .star
-                  margin-right 10px
-                  width 10px
-                  height 10px
-                  background-size 10px 10px
-                  &:last-child
-                    margin-right 0px
-                  &.on
-                    bg-image("../star/star24_on")
-                  &.half
-                    bg-image("../star/star24_half")
-                  &.off
-                    bg-image("../star/star24_off")
-
-
           .info
             display flex
             width 80%

@@ -1,10 +1,11 @@
 <template>
   <div>
     <div class="goods">
-      <div class="menu-wrapper">
+      <div class="menu-wrapper" ref="menuWrapper">
         <ul>
           <!--current-->
-          <li class="menu-item" v-for="good in goods">
+          <li class="menu-item" v-for="(good, index) in goods"
+              :class="{current: index===currIndex}" @click="clickMenuItem(index)">
             <span class="text border-1px">
               <span class="icon" v-if="good.type>=0" :class="supportClasses[good.type]"></span>
               {{good.name}}
@@ -12,7 +13,7 @@
           </li>
         </ul>
       </div>
-      <div class="foods-wrapper">
+      <div class="foods-wrapper"  ref="foodsWrapper">
         <ul>
           <li class="food-list food-list-hook" v-for="good in goods">
             <h1 class="title">{{good.name}}</h1>
@@ -48,12 +49,15 @@
 
 <script>
   import axios from 'axios'
+  import BScroll from 'better-scroll'
   const OK = 0
   export default {
     data () {
       return {
         goods: [],
-        supportClasses: ["decrease", "discount", "guarantee", "invoice", "special"]
+        supportClasses: ["decrease", "discount", "guarantee", "invoice", "special"],
+        tops: [],
+        scrollY: 0
       }
     },
 
@@ -63,8 +67,68 @@
           const result = response.data
           if (result.code === OK) {
             this.goods = result.data
+            // 延迟到界面更新后执行
+            /*setTimeout(() => {
+              this._initScroll()
+            }, 300)*/
+            this.$nextTick(() => {
+              this._initScroll()
+              this._initTops()
+            })
           }
         })
+    },
+
+    methods: {
+      _initScroll () {
+        // 创建menu的scroll
+        new BScroll(this.$refs.menuWrapper, {
+          click: true // 响应点击事件
+        })
+        // 创建foods的scroll
+        this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
+          probeType: 3 // 让scroll的回调函数被调用
+        })
+
+        // 监视foods的滚动
+        this.foodsScroll.on('scroll', (pos) => {
+          // console.log(pos.y)
+          this.scrollY = Math.abs(pos.y)
+        })
+      },
+      _initTops () {
+        const tops = []
+        let top = 0
+        tops.push(top)
+        // 找到所有对应的lis
+        const lis = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook')
+        for (var i = 0; i < lis.length; i++) {
+          var li = lis[i]
+          top += li.clientHeight
+          tops.push(top)
+        }
+        this.tops = tops
+        console.log(tops)
+      },
+
+      clickMenuItem (index) {
+        // alert(index)
+        // 找到对应的li
+        const lis = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook')
+        const li = lis[index]
+        // 平滑滑动到li
+        this.foodsScroll.scrollToElement(li, 300)
+      }
+    },
+
+    computed: {
+      currIndex () {  // 被选中的menu item的下标
+        const {tops, scrollY} = this
+        return tops.findIndex((top, index) => {
+          // 条件: scrollY大于或等于当前top, 且小于下一个top
+          return scrollY>=top && scrollY<tops[index+1]
+        })
+      }
     }
   }
 </script>

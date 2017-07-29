@@ -5,7 +5,7 @@
         <ul>
           <!--current-->
           <li class="menu-item" v-for="(good, index) in goods"
-              :class="{current: index===currIndex}" @click="clickMenuItem(index)">
+              :class="{current: index===currIndex}" @click="clickMenuItem(index, $event)">
             <span class="text border-1px">
               <span class="icon" v-if="good.type>=0" :class="supportClasses[good.type]"></span>
               {{good.name}}
@@ -34,7 +34,7 @@
                     <span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
                   </div>
                   <div class="cartcontrol-wrapper">
-                    cartcontrol组件
+                    <cartcontrol :food="food" :update-food-count="updateFoodCount"></cartcontrol>
                   </div>
                 </div>
               </li>
@@ -50,6 +50,8 @@
 <script>
   import axios from 'axios'
   import BScroll from 'better-scroll'
+  import cartcontrol from '../cartcontrol/cartcontrol.vue'
+
   const OK = 0
   export default {
     data () {
@@ -87,7 +89,8 @@
         })
         // 创建foods的scroll
         this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
-          probeType: 3 // 让scroll的回调函数被调用
+          probeType: 3, // 让scroll的回调函数被调用
+          click: true // 响应点击事件
         })
 
         // 监视foods的滚动
@@ -111,13 +114,38 @@
         console.log(tops)
       },
 
-      clickMenuItem (index) {
+      clickMenuItem (index, event) {
+        // console.log(index, event)
+        // 过滤原生事件的回调
+        if(!event._constructed) {
+          return
+        }
         // alert(index)
         // 找到对应的li
         const lis = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook')
         const li = lis[index]
         // 平滑滑动到li
         this.foodsScroll.scrollToElement(li, 300)
+      },
+
+      updateFoodCount (food, isAdd, event) {
+        if(!event._constructed) {
+          return
+        }
+        console.log('updateFoodCount()')
+        if(isAdd) { // 增加1
+          if(!food.count) { // 第一次
+            // 添加新的属性count(没有数据绑定)
+            // food.count = 1
+            this.$set(food, 'count', 1) // 有数据绑定, 会更新界面
+          } else { // 不是一次
+            food.count++
+          }
+        } else { // 减少1
+          if(food.count) {
+            food.count--
+          }
+        }
       }
     },
 
@@ -129,6 +157,10 @@
           return scrollY>=top && scrollY<tops[index+1]
         })
       }
+    },
+
+    components: {
+      cartcontrol
     }
   }
 </script>

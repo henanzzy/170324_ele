@@ -190,7 +190,7 @@
             vertical-align: top
             font-size: 12px
             color: rgb(7, 17, 27)
-          .star
+          .stars
             display: inline-block
             margin: 0 12px
             vertical-align: top
@@ -233,7 +233,7 @@
           .star-wrapper
             margin-bottom: 6px
             font-size: 0
-            .star
+            .stars
               display: inline-block
               margin-right: 6px
               vertical-align: top

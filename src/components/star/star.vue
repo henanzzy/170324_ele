@@ -54,7 +54,7 @@
       background-repeat no-repeat
     &.stars-48
       .star
-        margin-right 15px
+        margin-right 22px
         width 20px
         height 19px
         background-size 20px 19px
@@ -68,12 +68,12 @@
           bg-image("../star/star48_off")
     &.stars-36
       .star
-        /*margin-right 12px*/
+        margin-right 6px
         width 15px
         height 15px
         background-size 15px 15px
         &:last-child
-          margin-right 0px
+          margin-right 0
         &.on
           bg-image("../star/star36_on")
         &.half
@@ -82,18 +82,17 @@
           bg-image("../star/star36_off")
     &.stars-24
       .star
-        margin-right 10px
+        margin-right 3px
         width 10px
         height 10px
         background-size 10px 10px
         &:last-child
-          margin-right 0px
+          margin-right 0
         &.on
           bg-image("../star/star24_on")
         &.half
           bg-image("../star/star24_half")
         &.off
           bg-image("../star/star24_off")
-
 
 </style>

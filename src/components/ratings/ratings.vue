@@ -47,7 +47,7 @@
             <div class="content">
               <h1 class="name">{{rating.username}}</h1>
               <div class="star-wrapper">
-                <star :score="rating.score"></star>
+                <star :score="rating.score" :size="24"></star>
                 <span class="delivery">{{rating.deliveryTime}}</span>
               </div>
               <p class="text">{{rating.text}}</p>

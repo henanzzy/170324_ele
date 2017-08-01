@@ -19,7 +19,20 @@
           </div>
         </div>
       </div>
-      <div class="ball-container"></div>
+      <div class="ball-container">
+        <transition v-for="(ball, index) in balls"
+                    @before-enter="beforeDrop"
+                    @enter="drop"
+                    @after-enter="afterDrop"
+                    :key="index"
+                    :css="false"
+                    >
+          <div class="ball" v-show="ball.isShow">
+            <div class="inner inner-hook"></div>
+          </div>
+        </transition>
+
+      </div>
 
       <transition name="fold">
         <div class="shopcart-list" v-show="listShow">
@@ -59,7 +72,15 @@
 
     data () {
       return {
-        isShow: false
+        isShow: false,
+        balls: [ //所有小球状态的数组
+          {isShow: false},
+          {isShow: false},
+          {isShow: false},
+          {isShow: false},
+          {isShow: false}
+        ],
+        droppingBalls: [] // 包含所有正在执行动画的ball
       }
     },
 
@@ -125,6 +146,67 @@
         if(confirm('确定清空吗?')) {
           this.$emit('clearSelectFoods')
         }
+      },
+
+      /*
+      让一个隐藏的小球开始显示drop动画
+       */
+      startDropAnimation (startEl) {
+        // 找到一个隐藏的小球
+        const ball = this.balls.find(ball => !ball.isShow)
+        if(ball) { // 已经找到了
+          ball.isShow = true
+          ball.startEl = startEl //保存+号div
+          this.droppingBalls.push(ball) // 保存ball
+        }
+      },
+
+      // 指定el在动画开始时的状态(样式)
+      beforeDrop (el) { // el是小球div
+        console.log('beforeDrop()')
+        // 得到当前动画所对应的ball
+        const ball = this.droppingBalls.shift()
+        const startEl = ball.startEl
+        // 计算偏移量
+        let offsetY = 0
+        let offsetX = 0
+        const startElLeft = startEl.getBoundingClientRect().left
+        const startElTop = startEl.getBoundingClientRect().top
+        const elLeft = 32
+        const elBottom = 22
+        offsetX = startElLeft-elLeft
+        offsetY = -(window.innerHeight-startElTop-elBottom)
+        // 瞬间平移
+        el.style.transform = `translate3d(0, ${offsetY}px, 0)`
+        el.children[0].style.transform = `translate3d(${offsetX}px, 0, 0)`
+
+        // 保存ball
+        el.ball = ball
+      },
+
+      // 指定el在动画结束时的状态(样式)
+      drop (el) {
+        console.log('drop()')
+
+        // 强制进行一次重排重绘
+        const temp = el.clientHeight
+
+        // 必须异步指定
+        this.$nextTick(() => {
+          el.style.transform = `translate3d(0, 0, 0)`
+          el.children[0].style.transform = `translate3d(0, 0, 0)`
+        })
+      },
+
+      // 做一些收尾的工作(隐藏小球)
+      afterDrop (el) {
+        console.log('afterDrop()')
+
+        // 必须延迟0.4s才能隐藏ball
+        setTimeout(() => {
+          el.ball.isShow = false
+        }, 400)
+
       }
     },
 

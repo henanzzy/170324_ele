@@ -44,7 +44,7 @@
       </div>
       <shopcart :min-price="seller.minPrice" :delivery-price="seller.deliveryPrice"
                 :foods="selectFoods" :update-food-count="updateFoodCount"
-                @clearSelectFoods="clearSelectFoods"></shopcart>
+                @clearSelectFoods="clearSelectFoods" ref="shopcart"></shopcart>
     </div>
     <food :food="food" :update-food-count="updateFoodCount" ref="food"></food>
   </div>
@@ -151,6 +151,10 @@
           } else { // 不是一次
             food.count++
           }
+
+          // 通过shopcart组件对象启动一个小球动画
+          this.$refs.shopcart.startDropAnimation(event.target)
+
         } else { // 减少1
           if(food.count) {
             food.count--

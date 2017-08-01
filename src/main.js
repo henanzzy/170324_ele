@@ -1,11 +1,16 @@
 import Vue from 'vue'
 import VueResource from 'vue-resource'
+import VueScroller from 'vue-scroller'
+import {Button} from 'mint-ui'
 import moment from 'moment'
 import router from './router'
 import app from './app.vue'
 import './mock/mockServer'
 
 import "./common/styuls/index.styl"
+
+Vue.use(VueScroller)
+Vue.component(Button.name, Button) // 注册全局标签
 
 // 自定义全局的过滤器(格式化日期)
 Vue.filter('date', function (value) {// 被处理的时间值

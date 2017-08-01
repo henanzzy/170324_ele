@@ -38,7 +38,8 @@
         <div class="shopcart-list" v-show="listShow">
           <div class="list-header">
             <h1 class="title">购物车</h1>
-            <span class="empty" @click="clearFoods">清空</span>
+            <mt-button class="empty" @click.native="clearFoods" type="primary">清空</mt-button>
+            <!--<span class="empty" @click="clearFoods">清空</span>-->
           </div>
           <div class="list-content" ref="listContent">
             <ul>
@@ -59,8 +60,12 @@
 </template>
 
 <script>
+  import Vue from 'vue'
+  import {Button, Toast, MessageBox} from 'mint-ui'
   import BScroll from 'better-scroll'
   import cartcontrol from '../cartcontrol/cartcontrol.vue'
+
+
 
   export default {
     props: {
@@ -143,9 +148,31 @@
 
       clearFoods () {
         // 触发事件: clearSelectFoods
-        if(confirm('确定清空吗?')) {
+
+        MessageBox({
+          title: '提示',
+          message: '确定清空吗?',
+          showCancelButton: true
+        }).then(action => {
+          console.log(action)
+          if(action==='confirm') {
+            this.$emit('clearSelectFoods')
+            Toast({
+              message: '清理完成',
+              position: 'middle',
+              duration: 5000
+            })
+          }
+        })
+
+        /*if(confirm('确定清空吗?')) {
           this.$emit('clearSelectFoods')
-        }
+          Toast({
+            message: '清理完成',
+            position: 'middle',
+            duration: 5000
+          });
+        }*/
       },
 
       /*
@@ -342,7 +369,7 @@
         .empty
           float: right
           font-size: 12px
-          color: rgb(0, 160, 220)
+          /*color: rgb(0, 160, 220)*/
 
       .list-content
         padding: 0 18px
